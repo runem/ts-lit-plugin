@@ -34,22 +34,25 @@ tsTest("Don't check for the assignability of complex types in attribute bindings
 });
 
 tsTest("Complex types are assignable to attributes using converters", t => {
-	const { diagnostics } = getDiagnostics([
-		makeElement({
-			properties: {
-				'complex: string[]': `{
+	const { diagnostics } = getDiagnostics(
+		[
+			makeElement({
+				properties: {
+					"complex: string[]": `{
 					converter: {
 						fromAttribute(str) { return str.split(','); },
 						toAttribute(arr) { return arr.join(','); }
 					}
 				}`
+				}
+			}),
+			'html`<my-element complex="foo,bar"></my-element>`'
+		],
+		{
+			rules: {
+				"no-incompatible-type-binding": "off"
 			}
-		}),
-		'html`<my-element complex="foo,bar"></my-element>`'
-	], {
-		rules: {
-			"no-incompatible-type-binding": "off"
 		}
-	});
+	);
 	hasNoDiagnostics(t, diagnostics);
 });

@@ -1,16 +1,18 @@
 import { TestFile } from "./compile-files";
 
-type PropertyDefinitions = string[]|Record<string, string>;
+type PropertyDefinitions = string[] | Record<string, string>;
 
 export function makeElement({ properties, slots }: { properties?: PropertyDefinitions; slots?: string[] }): TestFile {
 	let propertiesString: string;
 
 	if (Array.isArray(properties)) {
-		propertiesString = properties.map((prop) => `@property() ${prop}`).join('\n');
+		propertiesString = properties.map(prop => `@property() ${prop}`).join("\n");
 	} else if (properties) {
-		propertiesString = Object.entries(properties).map(([prop, config]) => {
-			return `@property(${config}) ${prop}`;
-		}).join('\n');
+		propertiesString = Object.entries(properties)
+			.map(([prop, config]) => {
+				return `@property(${config}) ${prop}`;
+			})
+			.join("\n");
 	}
 
 	return {
