@@ -7,6 +7,7 @@ import { isPrimitiveArrayType } from "../../../analyze/util/type-util";
 import { isLitDirective } from "../directive/is-lit-directive";
 import { isAssignableBindingUnderSecuritySystem } from "./is-assignable-binding-under-security-system";
 import { isAssignableToType } from "./is-assignable-to-type";
+import { HtmlNodeAttrKind } from "../../../analyze/types/html-node/html-node-attr-types";
 
 export function isAssignableInAttributeBinding(
 	htmlAttr: HtmlNodeAttr,
@@ -15,6 +16,15 @@ export function isAssignableInAttributeBinding(
 ): boolean | undefined {
 	const { assignment } = htmlAttr;
 	if (assignment == null) return undefined;
+
+	if (htmlAttr.kind === HtmlNodeAttrKind.ATTRIBUTE) {
+		const htmlAttrTarget = context.htmlStore.getHtmlAttrTarget(htmlAttr);
+		const hasConverter = htmlAttrTarget?.declaration?.meta?.hasConverter;
+
+		if (hasConverter) {
+			return undefined;
+		}
+	}
 
 	if (assignment.kind === HtmlNodeAttrAssignmentKind.BOOLEAN) {
 		if (!isAssignableToType({ typeA, typeB }, context)) {
