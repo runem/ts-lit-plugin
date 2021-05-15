@@ -34,8 +34,10 @@ run(command).catch(console.log);
 async function copyPackage(linkPackageName, destPackageName) {
 	// eslint-disable-next-line no-console
 	console.log(`Copying ${linkPackageName} to ${destPackageName}/node_modules`);
-	await copy(`./packages/${linkPackageName}/lib`, `./packages/${destPackageName}/node_modules/${linkPackageName}/lib`);
-	await copy(`./packages/${linkPackageName}/package.json`, `./packages/${destPackageName}/node_modules/${linkPackageName}/package.json`);
+	await remove(`./packages/${destPackageName}/node_modules/${linkPackageName}`);
+	await copy(`./packages/${linkPackageName}`, `./packages/${destPackageName}/node_modules/${linkPackageName}`, {
+		filter: (path) => !path.includes('node_modules')
+	});
 
 	// Get rid of any "extraneous" according to "npm list --production --parseable --depth=99999" in nested node_modules
 	// The reason this script needs to run is because vscode extension development doesn't yet support symlinked node_modules.
