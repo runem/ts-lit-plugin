@@ -18,11 +18,13 @@ export function isLitDirective(type: SimpleType): boolean {
 	switch (type.kind) {
 		case "ALIAS":
 			return type.name === "DirectiveFn" || isLitDirective(type.target);
+		case "INTERFACE":
+			return type.name === "DirectiveResult";
 		case "OBJECT":
 			return type.call != null && isLitDirective(type.call);
 		case "FUNCTION": {
-			// We expect a directive to be a function with at least one argument that
-			// returns void.
+			// (Lit 1) We expect a directive to be a function with at least one
+			// argument that returns void.
 			if (
 				type.kind !== "FUNCTION" ||
 				type.parameters == null ||
@@ -32,6 +34,7 @@ export function isLitDirective(type: SimpleType): boolean {
 			) {
 				return false;
 			}
+
 			// And that one argument must all be lit Part types.
 			const firstArg = type.parameters[0].type;
 			if (firstArg.kind === "UNION") {
